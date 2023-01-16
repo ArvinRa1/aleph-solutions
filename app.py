@@ -1,3 +1,4 @@
+
 import pandas as pd
 import xml.etree.ElementTree as ET
 import dash
@@ -18,54 +19,74 @@ root = tree.getroot()
 
 df_cols = ["NodeId", "NodeClass", "BrowseName", "DisplayName", "Description"]
 rows = []
+
 s_nodeId = None
 s_nodeclass = None
 s_browsename = None
 s_dis = None
 s_des = None
+
 for node in root:
-    if node.tag[51:] == "UADataType":
-        s_nodeclass = "DataType"
-        s_nodeId = node.attrib.get("NodeId")
-        s_browsename = node.attrib.get("BrowseName")
-        for elem in node:
-            if elem.tag[51:] == "DisplayName":
-                s_dis = elem.text
-            if elem.tag[51:] == "Description":
-                s_des = elem.text
+    s_nodeclass = node.tag[51:]
+    s_nodeId = node.attrib.get("NodeId")
+    s_browsename = node.attrib.get("BrowseName")
 
-    elif node.tag[51:] == "UAObject":
-        s_nodeclass = "Object"
-        s_nodeId = node.attrib.get("NodeId")
-        s_browsename = node.attrib.get("BrowseName")
-        for elem in node:
-            if elem.tag[51:] == "DisplayName":
-                s_dis = elem.text
-            if elem.tag[51:] == "Description":
-                s_des = elem.text
+    for elem in node:
+        if elem.tag[51:] == "DisplayName":
+            s_dis = elem.text
+        if elem.tag[51:] == "Description":
+            s_des = elem.text
 
-    elif node.tag[51:] == "UAVariable":
-        s_nodeclass = "Variable"
-        s_nodeId = node.attrib.get("NodeId")
-        s_browsename = node.attrib.get("BrowseName")
-        for elem in node:
-            if elem.tag[51:] == "DisplayName":
-                s_dis = elem.text
-            if elem.tag[51:] == "Description":
-                s_des = elem.text
-
-    elif node.tag[51:] == "UAMethod":
-        s_nodeclass = "Method"
-        s_nodeId = node.attrib.get("NodeId")
-        s_browsename = node.attrib.get("BrowseName")
-        for elem in node:
-            if elem.tag[51:] == "DisplayName":
-                s_dis = elem.text
-            if elem.tag[51:] == "Description":
-                s_des = elem.text
+    if s_nodeclass in ["UADataType", "UAObject", "UAVariable", "UAMethod"]:
+        s_nodeclass = s_nodeclass.replace("UA", "")
 
     rows.append({"NodeId": s_nodeId, "NodeClass": s_nodeclass,
                  "BrowseName": s_browsename, "DisplayName": s_dis, "Description": s_des})
+
+
+# for node in root:
+#     if node.tag[51:] == "UADataType":
+#         s_nodeclass = "DataType"
+#         s_nodeId = node.attrib.get("NodeId")
+#         s_browsename = node.attrib.get("BrowseName")
+#         for elem in node:
+#             if elem.tag[51:] == "DisplayName":
+#                 s_dis = elem.text
+#             if elem.tag[51:] == "Description":
+#                 s_des = elem.text
+
+#     elif node.tag[51:] == "UAObject":
+#         s_nodeclass = "Object"
+#         s_nodeId = node.attrib.get("NodeId")
+#         s_browsename = node.attrib.get("BrowseName")
+#         for elem in node:
+#             if elem.tag[51:] == "DisplayName":
+#                 s_dis = elem.text
+#             if elem.tag[51:] == "Description":
+#                 s_des = elem.text
+
+#     elif node.tag[51:] == "UAVariable":
+#         s_nodeclass = "Variable"
+#         s_nodeId = node.attrib.get("NodeId")
+#         s_browsename = node.attrib.get("BrowseName")
+#         for elem in node:
+#             if elem.tag[51:] == "DisplayName":
+#                 s_dis = elem.text
+#             if elem.tag[51:] == "Description":
+#                 s_des = elem.text
+
+#     elif node.tag[51:] == "UAMethod":
+#         s_nodeclass = "Method"
+#         s_nodeId = node.attrib.get("NodeId")
+#         s_browsename = node.attrib.get("BrowseName")
+#         for elem in node:
+#             if elem.tag[51:] == "DisplayName":
+#                 s_dis = elem.text
+#             if elem.tag[51:] == "Description":
+#                 s_des = elem.text
+
+#     rows.append({"NodeId": s_nodeId, "NodeClass": s_nodeclass,
+#                  "BrowseName": s_browsename, "DisplayName": s_dis, "Description": s_des})
 
 out_df = pd.DataFrame(rows, columns=df_cols)
 nameoptions = out_df.BrowseName.dropna()
