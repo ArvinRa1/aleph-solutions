@@ -1,6 +1,7 @@
 import pandas as pd
 import xml.etree.ElementTree as ET
 from flask import Flask, request
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
@@ -10,6 +11,7 @@ tree = ET.parse("Opc.Ua.Di.NodeSet2[32].xml")
 root = tree.getroot()
 
 df_cols = ["NodeId", "NodeClass", "BrowseName", "DisplayName", "Description"]
+
 rows = []
 s_nodeId = None
 s_nodeclass = None
@@ -34,60 +36,25 @@ for node in root:
     rows.append({"NodeId": s_nodeId, "NodeClass": s_nodeclass,
                  "BrowseName": s_browsename, "DisplayName": s_dis, "Description": s_des})
 
-# for node in root:
-#     if node.tag[51:] == "UADataType":
-#         s_nodeclass = "DataType"
-#         s_nodeId = node.attrib.get("NodeId")
-#         s_browsename = node.attrib.get("BrowseName")
-#         for elem in node:
-#             if elem.tag[51:] == "DisplayName":
-#                 s_dis = elem.text
-#             if elem.tag[51:] == "Description":
-#                 s_des = elem.text
-
-#     elif node.tag[51:] == "UAObject":
-#         s_nodeclass = "Object"
-#         s_nodeId = node.attrib.get("NodeId")
-#         s_browsename = node.attrib.get("BrowseName")
-#         for elem in node:
-#             if elem.tag[51:] == "DisplayName":
-#                 s_dis = elem.text
-#             if elem.tag[51:] == "Description":
-#                 s_des = elem.text
-
-#     elif node.tag[51:] == "UAVariable":
-#         s_nodeclass = "Variable"
-#         s_nodeId = node.attrib.get("NodeId")
-#         s_browsename = node.attrib.get("BrowseName")
-#         for elem in node:
-#             if elem.tag[51:] == "DisplayName":
-#                 s_dis = elem.text
-#             if elem.tag[51:] == "Description":
-#                 s_des = elem.text
-
-#     elif node.tag[51:] == "UAMethod":
-#         s_nodeclass = "Method"
-#         s_nodeId = node.attrib.get("NodeId")
-#         s_browsename = node.attrib.get("BrowseName")
-#         for elem in node:
-#             if elem.tag[51:] == "DisplayName":
-#                 s_dis = elem.text
-#             if elem.tag[51:] == "Description":
-#                 s_des = elem.text
-
-#     rows.append({"NodeId": s_nodeId, "NodeClass": s_nodeclass,
-#                  "BrowseName": s_browsename, "DisplayName": s_dis, "Description": s_des})
-
 out_df = pd.DataFrame(rows, columns=df_cols)
+
+# for node in root:
+#     if node.get("NodeId") == "ns=1;i=6548":
+#         # print(node)
+#         result = ET.tostring(node)
 
 
 def getNodeId(nodeid):
-    '''
-    :param nodeid: NodeId in string type
-    :return: DataFrame in json format sliced on that NodeId
-    '''
+    """
+    This function takes in a nodeid argument and returns an XML representation of the result found in the df
+    dataframe. The result is found by searching for the NodeId
+    column in the dataframe for a value equal to the argument.
+    :param nodeid: string
+    :return: entire node element as xml
+    """
     out = df.loc[df.NodeId == nodeid]
-    return out.to_json(orient="index")
+    return out.to_xml(index=True)
+    # return out.to_json(orient="index")
 
 
 def getNodeClass(clss):

@@ -1,4 +1,3 @@
-
 import pandas as pd
 import xml.etree.ElementTree as ET
 import dash
@@ -6,11 +5,8 @@ from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
 from dash import dash_table
-from dash.exceptions import PreventUpdate
-
 
 app = dash.Dash(__name__)
-
 
 df = pd.read_xml("Opc.Ua.Di.NodeSet2[32].xml")
 
@@ -43,60 +39,29 @@ for node in root:
     rows.append({"NodeId": s_nodeId, "NodeClass": s_nodeclass,
                  "BrowseName": s_browsename, "DisplayName": s_dis, "Description": s_des})
 
-
-# for node in root:
-#     if node.tag[51:] == "UADataType":
-#         s_nodeclass = "DataType"
-#         s_nodeId = node.attrib.get("NodeId")
-#         s_browsename = node.attrib.get("BrowseName")
-#         for elem in node:
-#             if elem.tag[51:] == "DisplayName":
-#                 s_dis = elem.text
-#             if elem.tag[51:] == "Description":
-#                 s_des = elem.text
-
-#     elif node.tag[51:] == "UAObject":
-#         s_nodeclass = "Object"
-#         s_nodeId = node.attrib.get("NodeId")
-#         s_browsename = node.attrib.get("BrowseName")
-#         for elem in node:
-#             if elem.tag[51:] == "DisplayName":
-#                 s_dis = elem.text
-#             if elem.tag[51:] == "Description":
-#                 s_des = elem.text
-
-#     elif node.tag[51:] == "UAVariable":
-#         s_nodeclass = "Variable"
-#         s_nodeId = node.attrib.get("NodeId")
-#         s_browsename = node.attrib.get("BrowseName")
-#         for elem in node:
-#             if elem.tag[51:] == "DisplayName":
-#                 s_dis = elem.text
-#             if elem.tag[51:] == "Description":
-#                 s_des = elem.text
-
-#     elif node.tag[51:] == "UAMethod":
-#         s_nodeclass = "Method"
-#         s_nodeId = node.attrib.get("NodeId")
-#         s_browsename = node.attrib.get("BrowseName")
-#         for elem in node:
-#             if elem.tag[51:] == "DisplayName":
-#                 s_dis = elem.text
-#             if elem.tag[51:] == "Description":
-#                 s_des = elem.text
-
-#     rows.append({"NodeId": s_nodeId, "NodeClass": s_nodeclass,
-#                  "BrowseName": s_browsename, "DisplayName": s_dis, "Description": s_des})
-
 out_df = pd.DataFrame(rows, columns=df_cols)
 nameoptions = out_df.BrowseName.dropna()
 nameoptions = [{"label": str(i), "value": i} for i in nameoptions.unique()]
 
+
 def getNodeId(nodeid):
-    result1 = df.loc[df.NodeId == nodeid]
-    return result1.to_xml()
+    """
+    This function takes in a nodeid argument and returns an XML representation of the result found in the df
+    dataframe. The result is found by searching for the NodeId
+    column in the dataframe for a value equal to the argument.
+    :param nodeid: string
+    :return: entire node element as xml
+    """
+    out = df.loc[df.NodeId == nodeid]
+    return out.to_xml()
+
 
 def getNodeClass(clss):
+    """
+
+    :param clss:
+    :return:
+    """
     out = out_df.loc[out_df.NodeClass == clss]
     return out
 

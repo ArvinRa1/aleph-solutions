@@ -1,0 +1,11 @@
+<ns0:UAVariable xmlns:ns0="http://opcfoundation.org/UA/2011/03/UANodeSet.xsd" xmlns:ns1="http://opcfoundation.org/UA/2008/02/Types.xsd" BrowseName="1:ParameterResultDataType" DataType="String" NodeId="ns=1;i=6548" ParentNodeId="ns=1;i=6423" ReleaseStatus="Deprecated">
+    <ns0:DisplayName>ParameterResultDataType</ns0:DisplayName>
+    <ns0:References>
+      <ns0:Reference ReferenceType="HasTypeDefinition">i=69</ns0:Reference>
+      <ns0:Reference IsForward="false" ReferenceType="HasComponent">ns=1;i=6423</ns0:Reference>
+    </ns0:References>
+    <ns0:Value>
+      <ns1:String>//xs:element[@name='ParameterResultDataType']</ns1:String>
+    </ns0:Value>
+  </ns0:UAVariable>
+  
